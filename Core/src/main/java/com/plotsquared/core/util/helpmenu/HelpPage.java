@@ -60,7 +60,7 @@ public class HelpPage {
                     .tag("footer", Tag.inserting(TranslatableCaption.of("help.help_footer").toComponent(player)))
                     .build();
             player.sendMessage(
-                    StaticCaption.of("<header>\n<page_header>\n<help_objects>\n<footer>"),
+                    StaticCaption.of("<header>\n<page_header><help_objects><footer>"),
                     contentResolver
             );
         }
