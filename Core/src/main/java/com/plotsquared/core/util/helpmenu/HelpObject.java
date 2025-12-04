@@ -45,16 +45,9 @@ public class HelpObject implements ComponentLike {
                 .build());
     }
 
-    private String buildArgumentList(final Argument<?>[] arguments) {
-        if (arguments == null) {
-            return "";
-        }
-        final StringBuilder builder = new StringBuilder();
-        for (final Argument<?> argument : arguments) {
-            builder.append("[").append(argument.getName()).append(" (")
-                    .append(argument.getExample()).append(")],");
-        }
-        return arguments.length > 0 ? builder.substring(0, builder.length() - 1) : "";
+private String buildArgumentList(final Argument<?>[] arguments) {
+        // ZMIANA: Zwracamy pusty ciąg, aby ukryć argumenty (np. [load/restore]) w menu pomocy
+        return "";
     }
 
     @Override
