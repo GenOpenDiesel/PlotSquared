@@ -46,7 +46,7 @@ public class HelpPage {
                 .build();
     }
 
-    public void render(PlotPlayer<?> player) {
+public void render(PlotPlayer<?> player) {
         if (this.helpObjects.size() < 1) {
             player.sendMessage(TranslatableCaption.of("help.no_permission"));
         } else {
@@ -56,7 +56,9 @@ public class HelpPage {
                             TranslatableCaption.of("help.help_page_header").getComponent(player),
                             pageHeaderResolver
                     )))
-                    .tag("help_objects", Tag.inserting(ComponentHelper.join(this.helpObjects, Component.text("\n"))))
+                    // ZMIANA TUTAJ: Zamieniono Component.text("\n") na Component.text(""),
+                    // aby usunąć dodatkową pustą linię pomiędzy wpisami.
+                    .tag("help_objects", Tag.inserting(ComponentHelper.join(this.helpObjects, Component.text(""))))
                     .tag("footer", Tag.inserting(TranslatableCaption.of("help.help_footer").toComponent(player)))
                     .build();
             player.sendMessage(
