@@ -45,9 +45,19 @@ public class HelpObject implements ComponentLike {
                 .build());
     }
 
-private String buildArgumentList(final Argument<?>[] arguments) {
-        // ZMIANA: Zwracamy pusty ciąg, aby ukryć argumenty (np. [load/restore]) w menu pomocy
-        return "";
+    private String buildArgumentList(final Argument<?>[] arguments) {
+        if (arguments == null) {
+            return "";
+        }
+        final StringBuilder builder = new StringBuilder();
+        for (final Argument<?> argument : arguments) {
+            // ZMIANA: Wyświetlamy argument tylko jeśli to "PlayerName", zamieniając go na <gracz>.
+            // Wszystkie inne argumenty (int, boolean itp.) są pomijane.
+            if ("PlayerName".equalsIgnoreCase(argument.getName())) {
+                builder.append(" <gracz>");
+            }
+        }
+        return builder.toString();
     }
 
     @Override
