@@ -27,7 +27,7 @@ import java.util.List;
 
 public class HelpMenu {
 
-    private static final int PER_PAGE = 5;
+    private static final int PER_PAGE = 8;
 
     private final PlotPlayer<?> commandCaller;
     private HelpPage page = new HelpPage(CommandCategory.INFO, 0, 0);
