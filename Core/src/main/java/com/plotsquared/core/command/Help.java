@@ -60,9 +60,10 @@ public class Help extends Command {
             RunnableVal2<Command, CommandResult> whenDone
     ) {
         switch (args.length) {
-            case 0 -> {
-                return displayHelp(player, null, 0);
-            }
+case 0 -> {
+    // Zmiana "null" na "all" oraz strony z 0 na 1 wymusi wyświetlenie wszystkich komend
+    return displayHelp(player, "all", 1);
+}
             case 1 -> {
                 if (MathMan.isInteger(args[0])) {
                     try {
