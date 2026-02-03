@@ -197,9 +197,23 @@ public class Auto extends SubCommand {
                     }
                 }
             }
+// ORYGINAŁ: Sprawdza czy jest tylko jeden świat działkowy
             if (this.plotAreaManager.getAllPlotAreas().length == 1) {
                 plotarea = this.plotAreaManager.getAllPlotAreas()[0];
             }
+            
+            // MODYFIKACJA: Jeśli nadal null (gracz jest np. na spawnie), szukaj świata "plots"
+            if (plotarea == null) {
+                for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
+                    // Tutaj wpisz nazwę swojego świata z działkami
+                    if (area.getWorldName().equalsIgnoreCase("Dzialki")) {
+                        plotarea = area;
+                        break;
+                    }
+                }
+            }
+
+            // Jeśli NADAL null (nie ma świata plots), wyślij błąd
             if (plotarea == null) {
                 player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 return false;
