@@ -249,7 +249,7 @@ public final class FlagCommand extends Command {
     ) throws CommandException {
         // Blokada użycia komendy dla zwykłych graczy
         if (!player.hasPermission("plots.admin")) {
-            player.sendMessage(Component.text("Ta funkcja jest niedostępna dla graczy.").color(NamedTextColor.RED));
+            player.sendMessage(StaticCaption.of("<red>Ta funkcja jest niedostępna dla graczy.</red>"));
             return CompletableFuture.completedFuture(false);
         }
 
