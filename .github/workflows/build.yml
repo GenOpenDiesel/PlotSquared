@@ -19,6 +19,15 @@ jobs:
           java-version: 21
       - name: Clean Build
         run: ./gradlew clean build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlotSquared-Build
+          path: |
+            Bukkit/build/libs/*.jar
+            Core/build/libs/*.jar
+
       - name: Determine release status
         if: ${{ runner.os == 'Linux' }}
         run: |
