@@ -45,6 +45,7 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -246,6 +247,12 @@ public final class FlagCommand extends Command {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) throws CommandException {
+        // Blokada użycia komendy dla zwykłych graczy
+        if (!player.hasPermission("plots.admin")) {
+            player.sendMessage(Component.text("Ta funkcja jest niedostępna dla graczy.").color(NamedTextColor.RED));
+            return CompletableFuture.completedFuture(false);
+        }
+
         if (args.length == 0 || !Arrays
                 .asList("set", "s", "list", "l", "delete", "remove", "r", "add", "a", "info", "i")
                 .contains(args[0].toLowerCase(Locale.ENGLISH))) {
@@ -262,6 +269,11 @@ public final class FlagCommand extends Command {
             final PlotPlayer<?> player, final String[] args,
             final boolean space
     ) {
+        // Zablokowanie podpowiedzi z Tab dla zwykłych graczy
+        if (!player.hasPermission("plots.admin")) {
+            return Collections.emptyList();
+        }
+
         if (args.length == 1) {
             return Stream
                     .of("set", "add", "remove", "delete", "info", "list")
