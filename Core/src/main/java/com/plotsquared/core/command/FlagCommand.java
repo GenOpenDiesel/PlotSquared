@@ -256,7 +256,7 @@ public final class FlagCommand extends Command {
                     isAllowedCommand = true;
                 }
             }
-            
+
             if (!isAllowedCommand) {
                 player.sendMessage(StaticCaption.of("<red>Możesz zarządzać tylko flagą 'price' (sprzedaż działki)!\nUżycie: <yellow>/plot flag set price <cena></yellow> lub <yellow>/plot flag remove price</yellow></red>"));
                 return CompletableFuture.completedFuture(false);
