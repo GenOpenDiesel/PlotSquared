@@ -66,7 +66,7 @@ import java.util.stream.Stream;
 
 @CommandDeclaration(command = "flag",
         aliases = {"f", "flag"},
-        usage = "/plot flag <set | remove | add | list | info> <flag> <value>",
+        usage = "/plot flag set price <wartość>",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE,
         permission = "plots.flag")
@@ -86,7 +86,7 @@ public final class FlagCommand extends Command {
                 TranslatableCaption.of("commandconfig.command_syntax"),
                 TagResolver.resolver(
                         "value",
-                        Tag.inserting(Component.text("/plot flag <set | remove | add | list | info> <flag> <value>"))
+                        Tag.inserting(Component.text(player.hasPermission("plots.admin") ? "/plot flag <set | remove | list> <flag> <value>" : "/plot flag set price <wartość>"))
                 )
         );
         return true;
@@ -172,11 +172,6 @@ public final class FlagCommand extends Command {
         return result;
     }
 
-    /**
-     * Checks if the player is allowed to modify the flags at their current location
-     *
-     * @return {@code true} if the player is allowed to modify the flags at their current location
-     */
     private static boolean checkRequirements(final @NonNull PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
@@ -197,19 +192,16 @@ public final class FlagCommand extends Command {
         return true;
     }
 
-    /**
-     * Attempt to extract the plot flag from the command arguments. If the flag cannot
-     * be found, a flag suggestion may be sent to the player.
-     *
-     * @param player Player executing the command
-     * @param arg    String to extract flag from
-     * @return The flag, if found, else null
-     */
     @Nullable
     private static PlotFlag<?, ?> getFlag(
             final @NonNull PlotPlayer<?> player,
             final @NonNull String arg
     ) {
+        if (!arg.equalsIgnoreCase("price") && !player.hasPermission("plots.admin")) {
+            player.sendMessage(Component.text("Możesz używać tylko flagi 'price', aby sprzedawać działkę! Użyj: /plot flag set price <cena>"));
+            return null;
+        }
+
         if (arg.length() > 0) {
             final PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(arg);
             if (flag instanceof InternalFlag || flag == null) {
@@ -249,6 +241,12 @@ public final class FlagCommand extends Command {
         if (args.length == 0 || !Arrays
                 .asList("set", "s", "list", "l", "delete", "remove", "r", "add", "a", "info", "i")
                 .contains(args[0].toLowerCase(Locale.ENGLISH))) {
+            
+            if (!player.hasPermission("plots.admin")) {
+                player.sendMessage(Component.text("Zarządzanie flagami. Użyj: /plot flag set price <cena>"));
+                return CompletableFuture.completedFuture(true);
+            }
+
             new HelpMenu(player).setCategory(CommandCategory.SETTINGS)
                     .setCommands(this.getCommands()).generateMaxPages()
                     .generatePage(0, getParent().toString(), player).render();
@@ -262,6 +260,19 @@ public final class FlagCommand extends Command {
             final PlotPlayer<?> player, final String[] args,
             final boolean space
     ) {
+        if (!player.hasPermission("plots.admin")) {
+            if (args.length == 1) {
+                return Stream.of("set", "remove")
+                        .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                        .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {}).collect(Collectors.toList());
+            } else if (Arrays.asList("set", "remove", "delete").contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 2) {
+                return Stream.of("price")
+                        .filter(flag -> flag.startsWith(args[1].toLowerCase(Locale.ENGLISH)))
+                        .map(flag -> new Command(null, false, flag, "", RequiredType.NONE, null) {}).collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        }
+
         if (args.length == 1) {
             return Stream
                     .of("set", "add", "remove", "delete", "info", "list")
@@ -284,7 +295,6 @@ public final class FlagCommand extends Command {
                     Stream<String> stream = flag.getTabCompletions().stream();
                     if (flag instanceof ListFlag && args[2].contains(",")) {
                         final String[] split = args[2].split(",");
-                        // Prefix earlier values onto all suggestions
                         StringBuilder prefix = new StringBuilder();
                         for (int i = 0; i < split.length - 1; i++) {
                             prefix.append(split[i]).append(",");
@@ -319,7 +329,7 @@ public final class FlagCommand extends Command {
 
     @CommandDeclaration(command = "set",
             aliases = {"s", "set"},
-            usage = "/plot flag set <flag> <value>",
+            usage = "/plot flag set price <wartość>",
             category = CommandCategory.SETTINGS,
             requiredType = RequiredType.NONE,
             permission = "plots.set.flag")
@@ -334,7 +344,7 @@ public final class FlagCommand extends Command {
         if (args.length < 2) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot flag set <flag> <value>")))
+                    TagResolver.resolver("value", Tag.inserting(Component.text(player.hasPermission("plots.admin") ? "/plot flag set <flag> <value>" : "/plot flag set price <wartość>")))
             );
             return;
         }
@@ -399,7 +409,7 @@ public final class FlagCommand extends Command {
         if (args.length < 2) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot flag add <flag> <values>")))
+                    TagResolver.resolver("value", Tag.inserting(Component.text(player.hasPermission("plots.admin") ? "/plot flag add <flag> <value>" : "/plot flag set price <wartość>")))
             );
             return;
         }
@@ -459,7 +469,7 @@ public final class FlagCommand extends Command {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @CommandDeclaration(command = "remove",
             aliases = {"r", "remove", "delete"},
-            usage = "/plot flag remove <flag> [values]",
+            usage = "/plot flag remove price",
             category = CommandCategory.SETTINGS,
             requiredType = RequiredType.NONE,
             permission = "plots.flag.remove")
@@ -474,7 +484,7 @@ public final class FlagCommand extends Command {
         if (args.length != 1 && args.length != 2) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot flag remove <flag> [values]")))
+                    TagResolver.resolver("value", Tag.inserting(Component.text(player.hasPermission("plots.admin") ? "/plot flag remove <flag> [values]" : "/plot flag remove price")))
             );
             return;
         }
@@ -599,6 +609,11 @@ public final class FlagCommand extends Command {
             return;
         }
 
+        if (!player.hasPermission("plots.admin")) {
+            player.sendMessage(Component.text("Dostępne flagi do zarządzania sprzedażą: price"));
+            return;
+        }
+
         final Map<Component, ArrayList<String>> flags = new HashMap<>();
         for (PlotFlag<?, ?> plotFlag : GlobalFlagContainer.getInstance().getRecognizedPlotFlags()) {
             if (plotFlag instanceof InternalFlag) {
@@ -636,7 +651,7 @@ public final class FlagCommand extends Command {
 
     @CommandDeclaration(command = "info",
             aliases = {"i", "info"},
-            usage = "/plot flag info <flag>",
+            usage = "/plot flag info price",
             category = CommandCategory.SETTINGS,
             requiredType = RequiredType.NONE,
             permission = "plots.flag.info")
@@ -651,19 +666,17 @@ public final class FlagCommand extends Command {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot flag info <flag>")))
+                    TagResolver.resolver("value", Tag.inserting(Component.text(player.hasPermission("plots.admin") ? "/plot flag info <flag>" : "/plot flag info price")))
             );
             return;
         }
         final PlotFlag<?, ?> plotFlag = getFlag(player, args[0]);
         if (plotFlag != null) {
             player.sendMessage(TranslatableCaption.of("flag.flag_info_header"));
-            // Flag name
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_name"),
                     TagResolver.resolver("flag", Tag.inserting(Component.text(plotFlag.getName())))
             );
-            // Flag category
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_category"),
                     TagResolver.resolver(
@@ -671,11 +684,8 @@ public final class FlagCommand extends Command {
                             Tag.inserting(plotFlag.getFlagCategory().toComponent(player))
                     )
             );
-            // Flag description
-            // TODO maybe merge and \n instead?
             player.sendMessage(TranslatableCaption.of("flag.flag_info_description"));
             player.sendMessage(plotFlag.getFlagDescription());
-            // Flag example
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_example"),
                     TagResolver.builder()
@@ -684,14 +694,12 @@ public final class FlagCommand extends Command {
                             .tag("value", Tag.preProcessParsed(plotFlag.getExample()))
                             .build()
             );
-            // Default value
             final String defaultValue = player.getCurrentPlot().getArea().getFlagContainer()
                     .getFlagErased(plotFlag.getClass()).toString();
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_default_value"),
                     TagResolver.resolver("value", Tag.inserting(Component.text(defaultValue)))
             );
-            // Footer. Done this way to prevent the duplicate-message-thingy from catching it
             player.sendMessage(TranslatableCaption.of("flag.flag_info_footer"));
         }
     }
