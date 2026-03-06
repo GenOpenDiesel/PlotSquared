@@ -246,10 +246,21 @@ public final class FlagCommand extends Command {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) throws CommandException {
-        // Blokada użycia komendy dla zwykłych graczy
+        // Blokada użycia komendy dla zwykłych graczy z wyjątkiem flagi 'price'
         if (!player.hasPermission("plots.admin")) {
-            player.sendMessage(StaticCaption.of("<red>Ta funkcja jest niedostępna dla graczy.</red>"));
-            return CompletableFuture.completedFuture(false);
+            boolean isAllowedCommand = false;
+            if (args.length >= 2) {
+                String subCmd = args[0].toLowerCase(Locale.ENGLISH);
+                String flagName = args[1].toLowerCase(Locale.ENGLISH);
+                if (flagName.equals("price") && (subCmd.equals("set") || subCmd.equals("s") || subCmd.equals("remove") || subCmd.equals("r") || subCmd.equals("delete"))) {
+                    isAllowedCommand = true;
+                }
+            }
+            
+            if (!isAllowedCommand) {
+                player.sendMessage(StaticCaption.of("<red>Możesz zarządzać tylko flagą 'price' (sprzedaż działki)!\nUżycie: <yellow>/plot flag set price <cena></yellow> lub <yellow>/plot flag remove price</yellow></red>"));
+                return CompletableFuture.completedFuture(false);
+            }
         }
 
         if (args.length == 0 || !Arrays
@@ -268,8 +279,21 @@ public final class FlagCommand extends Command {
             final PlotPlayer<?> player, final String[] args,
             final boolean space
     ) {
-        // Zablokowanie podpowiedzi z Tab dla zwykłych graczy
+        // Zablokowanie podpowiedzi z Tab dla zwykłych graczy z wyjątkiem price
         if (!player.hasPermission("plots.admin")) {
+            if (args.length == 1) {
+                return Stream.of("set", "remove")
+                        .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                        .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+                        }).collect(Collectors.toList());
+            } else if (args.length == 2) {
+                String subCmd = args[0].toLowerCase(Locale.ENGLISH);
+                if (subCmd.equals("set") || subCmd.equals("s") || subCmd.equals("remove") || subCmd.equals("r") || subCmd.equals("delete")) {
+                    if ("price".startsWith(args[1].toLowerCase(Locale.ENGLISH))) {
+                        return Collections.singletonList(new Command(null, false, "price", "", RequiredType.NONE, null) {});
+                    }
+                }
+            }
             return Collections.emptyList();
         }
 
