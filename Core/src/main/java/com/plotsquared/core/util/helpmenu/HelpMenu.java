@@ -34,6 +34,7 @@ public class HelpMenu {
     private int maxPage;
     private CommandCategory commandCategory;
     private List<Command> commands;
+    private String helpCommand = "/plot help";
 
     public HelpMenu(PlotPlayer<?> commandCaller) {
         this.commandCaller = commandCaller;
@@ -41,6 +42,17 @@ public class HelpMenu {
 
     public HelpMenu setCategory(CommandCategory commandCategory) {
         this.commandCategory = commandCategory;
+        return this;
+    }
+
+    /**
+     * Set the base command used by the clickable page navigation (without the trailing page number).
+     *
+     * @param helpCommand e.g. {@code /plot help} or {@code /plot help info}
+     * @return this menu
+     */
+    public HelpMenu setHelpCommand(String helpCommand) {
+        this.helpCommand = helpCommand;
         return this;
     }
 
@@ -66,7 +78,7 @@ public class HelpMenu {
         if (currentPage < 0) {
             currentPage = 0;
         }
-        this.page = new HelpPage(this.commandCategory, currentPage, this.maxPage);
+        this.page = new HelpPage(this.commandCategory, currentPage, this.maxPage, this.helpCommand);
         int max = Math.min((currentPage * PER_PAGE) + (PER_PAGE - 1), this.commands.size());
         for (int i = currentPage * PER_PAGE; i < max; i++) {
             this.page.addHelpItem(new HelpObject(this.commands.get(i), label, audience));

@@ -18,18 +18,12 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.caption.StaticCaption;
-import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.helpmenu.HelpMenu;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.tag.Tag;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +37,14 @@ import java.util.concurrent.CompletableFuture;
         usage = "help [category | #]",
         permission = "plots.use")
 public class Help extends Command {
+
+    /**
+     * The commands shown (in order) on the default {@code /plot help} page, before any
+     * category is selected. Use the clickable {@code [>>>]} / {@code [<<<]} navigation to page through them.
+     */
+    private static final List<String> FAVORITE_COMMANDS = List.of(
+            "home", "auto", "claim", "info", "delete", "merge", "visit", "add", "trust", "remove", "deny"
+    );
 
     public Help(Command parent) {
         super(parent, true);
@@ -111,44 +113,31 @@ public class Help extends Command {
                     }
                 }
             }
-            if (cat == null && page == 0) {
-                TextComponent.Builder builder = Component.text();
-                builder.append(TranslatableCaption.of("help.help_header").toComponent(player));
-                for (CommandCategory c : CommandCategory.values()) {
-                    if (!c.canAccess(player)) {
-                        continue;
+            final String label = getParent().toString();
+            if (cat == null) {
+                // Default help: show a curated list of the most common commands, paginated
+                // and navigable through the clickable [<<<] / [>>>] buttons.
+                final List<Command> favorites = new ArrayList<>();
+                for (final String name : FAVORITE_COMMANDS) {
+                    final Command command = MainCommand.getInstance().getCommand(name);
+                    if (command != null && command.canExecute(player, false)) {
+                        favorites.add(command);
                     }
-                    builder.append(Component.newline());
-                    builder.append(TranslatableCaption.of("help.help_info_item").toComponent(
-                            player, TagResolver.builder()
-                                    .tag("command", Tag.inserting(Component.text("/plot help")))
-                                    .tag("category", Tag.inserting(Component.text(c.name().toLowerCase())))
-                                    .tag("category_desc", Tag.inserting(c.toComponent(player)))
-                                    .build()
-                    ));
                 }
-                builder.append(Component.newline());
-                builder.append(TranslatableCaption.of("help.help_info_item").toComponent(
-                        player, TagResolver.builder()
-                                .tag("command", Tag.inserting(Component.text("/plot help")))
-                                .tag("category", Tag.inserting(Component.text("all")))
-                                .tag(
-                                        "category_desc", Tag.inserting(TranslatableCaption
-                                                .of("help.help_display_all_commands")
-                                                .toComponent(player))
-                                )
-                                .build()
-                ));
-                builder.append(Component.newline());
-                builder.append(TranslatableCaption.of("help.help_footer").toComponent(player));
-                player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.asComponent())));
+                new HelpMenu(player)
+                        .setCommands(favorites)
+                        .setHelpCommand("/" + label + " help")
+                        .generateMaxPages()
+                        .generatePage(page - 1, label, player)
+                        .render();
                 return true;
             }
-            new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(
-                            page - 1,
-                            getParent().toString(),
-                            player
-                    )
+            new HelpMenu(player)
+                    .setCategory(catEnum)
+                    .setHelpCommand("/" + label + " help " + cat.toLowerCase(Locale.ENGLISH))
+                    .getCommands()
+                    .generateMaxPages()
+                    .generatePage(page - 1, label, player)
                     .render();
             return true;
         });

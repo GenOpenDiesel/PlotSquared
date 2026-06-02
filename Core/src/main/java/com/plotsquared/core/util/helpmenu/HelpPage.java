@@ -38,12 +38,33 @@ public class HelpPage {
     private final TagResolver pageHeaderResolver;
 
     public HelpPage(CommandCategory category, int currentPage, int maxPages) {
+        this(category, currentPage, maxPages, "/plot help");
+    }
+
+    public HelpPage(CommandCategory category, int currentPage, int maxPages, String helpCommand) {
         this.helpObjects = new ArrayList<>();
         this.pageHeaderResolver = TagResolver.builder()
                 .tag("category", Tag.inserting(Component.text(category == null ? "ALL" : category.name())))
                 .tag("current", Tag.inserting(Component.text(currentPage + 1)))
                 .tag("max", Tag.inserting(Component.text(maxPages + 1)))
+                .tag("navigation", Tag.inserting(buildNavigation(currentPage, maxPages, helpCommand)))
                 .build();
+    }
+
+    private Component buildNavigation(int currentPage, int maxPages, String helpCommand) {
+        StringBuilder nav = new StringBuilder();
+        if (currentPage > 0) {
+            nav.append("<click:run_command:'").append(helpCommand).append(' ').append(currentPage)
+                    .append("'><hover:show_text:'<gray>Previous page</gray>'><gold>[<<<]</gold></hover></click>");
+        }
+        if (currentPage > 0 && currentPage < maxPages) {
+            nav.append("<gray> </gray>");
+        }
+        if (currentPage < maxPages) {
+            nav.append("<click:run_command:'").append(helpCommand).append(' ').append(currentPage + 2)
+                    .append("'><hover:show_text:'<gray>Next page</gray>'><gold>[>>>]</gold></hover></click>");
+        }
+        return MINI_MESSAGE.deserialize(nav.toString());
     }
 
     public void render(PlotPlayer<?> player) {
