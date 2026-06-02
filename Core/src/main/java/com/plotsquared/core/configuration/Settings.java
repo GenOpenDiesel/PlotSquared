@@ -615,6 +615,13 @@ public class Settings extends Config {
         public static int
                 MAX_AUTO_AREA = 4;
 
+        @Comment({
+                "The default plot world to use for `/plot auto` when the player is not standing",
+                "in a plot world. Leave empty to disable (players must be in a plot world).",
+                "You can specify a world name (e.g. `plotworld`) or `world;area` for a specific area."
+        })
+        public static String DEFAULT_WORLD = "";
+
     }
 
 

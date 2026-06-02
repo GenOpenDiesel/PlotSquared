@@ -200,6 +200,9 @@ public class Auto extends SubCommand {
             if (this.plotAreaManager.getAllPlotAreas().length == 1) {
                 plotarea = this.plotAreaManager.getAllPlotAreas()[0];
             }
+            if (plotarea == null && !Settings.Claim.DEFAULT_WORLD.isEmpty()) {
+                plotarea = this.plotAreaManager.getPlotAreaByString(Settings.Claim.DEFAULT_WORLD);
+            }
             if (plotarea == null) {
                 player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 return false;
