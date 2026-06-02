@@ -115,7 +115,13 @@ public class Help extends Command {
             }
             final String label = getParent().toString();
             if (cat == null) {
-                // Default help: show a curated list of the most common commands, paginated
+                // Default help: prefer the fully configurable config/pomoc.yml content, so server
+                // owners control exactly what is shown. Falls back to the curated list below if disabled.
+                if (com.plotsquared.core.PlotSquared.get().getPlotHelp()
+                        .render(player, page, "/" + label + " help")) {
+                    return true;
+                }
+                // Fallback: a curated list of the most common commands, paginated
                 // and navigable through the clickable [<<<] / [>>>] buttons.
                 final List<Command> favorites = new ArrayList<>();
                 for (final String name : FAVORITE_COMMANDS) {

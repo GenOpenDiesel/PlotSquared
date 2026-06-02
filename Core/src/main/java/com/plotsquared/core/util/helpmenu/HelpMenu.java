@@ -79,7 +79,7 @@ public class HelpMenu {
             currentPage = 0;
         }
         this.page = new HelpPage(this.commandCategory, currentPage, this.maxPage, this.helpCommand);
-        int max = Math.min((currentPage * PER_PAGE) + (PER_PAGE - 1), this.commands.size());
+        int max = Math.min((currentPage * PER_PAGE) + PER_PAGE, this.commands.size());
         for (int i = currentPage * PER_PAGE; i < max; i++) {
             this.page.addHelpItem(new HelpObject(this.commands.get(i), label, audience));
         }

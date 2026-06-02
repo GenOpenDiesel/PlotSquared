@@ -141,6 +141,8 @@ public class PlotSquared {
     // Temporary hold the plots/clusters before the worlds load
     private HashMap<String, Set<PlotCluster>> clustersTmp;
     private YamlConfiguration config;
+    // Configurable /plot help content (config/pomoc.yml)
+    private final com.plotsquared.core.util.helpmenu.PlotHelp plotHelp = new com.plotsquared.core.util.helpmenu.PlotHelp();
     // Platform / Version / Update URL
     private PlotVersion version;
     // Files and configuration
@@ -1450,7 +1452,17 @@ public class PlotSquared {
         } catch (IOException ignored) {
             LOGGER.error("Failed to save storage.yml");
         }
+        this.plotHelp.load(folder);
         return true;
+    }
+
+    /**
+     * Get the configurable {@code /plot help} content loaded from {@code config/pomoc.yml}.
+     *
+     * @return the plot help configuration
+     */
+    public com.plotsquared.core.util.helpmenu.PlotHelp getPlotHelp() {
+        return this.plotHelp;
     }
 
     public @NonNull String getConfigurationVersion() {
