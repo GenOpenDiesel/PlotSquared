@@ -203,6 +203,15 @@ public class Auto extends SubCommand {
             if (plotarea == null && !Settings.Claim.DEFAULT_WORLD.isEmpty()) {
                 plotarea = this.plotAreaManager.getPlotAreaByString(Settings.Claim.DEFAULT_WORLD);
             }
+            // Last resort: if the player is not in a plot world and no (valid) default world is
+            // configured, fall back to the first available plot area so `/plot auto` still works
+            // from any world (the claim flow teleports the player there when teleport-on-auto is on).
+            if (plotarea == null) {
+                final PlotArea[] areas = this.plotAreaManager.getAllPlotAreas();
+                if (areas.length > 0) {
+                    plotarea = areas[0];
+                }
+            }
             if (plotarea == null) {
                 player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 return false;

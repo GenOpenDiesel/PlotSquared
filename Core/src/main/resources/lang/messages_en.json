@@ -441,7 +441,7 @@
   "signs.owner_sign_line_3": "<gray><owner></gray>",
   "signs.owner_sign_line_4": "<dark_gray>Claimed</dark_gray>",
   "help.help_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",
-  "help.help_page_header": "\n<gold>Category: </gold><gray><category>,</gray><gold> Page: </gold><gray><current></gray><dark_gray>/</dark_gray><gray><max></gray> <navigation>\n",
+  "help.help_page_header": "\n<gold>Category: </gold><gray><category>,</gray><gold> Page: </gold><gray><current></gray><dark_gray>/</dark_gray><gray><max></gray>\n",
   "help.help_footer": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",
   "help.help_info_item": "<gold><command> <gray><category> </gray><dark_gray>- </dark_gray><gray><category_desc></gray>",
   "help.help_item": "<gold><usage> <gray>[<gold><alias></gold>]</gray>\n <dark_gray>- </dark_gray><gray><desc></gray>",

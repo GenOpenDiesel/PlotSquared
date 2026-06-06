@@ -36,6 +36,7 @@ public class HelpPage {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private final List<HelpObject> helpObjects;
     private final TagResolver pageHeaderResolver;
+    private final Component navigation;
 
     public HelpPage(CommandCategory category, int currentPage, int maxPages) {
         this(category, currentPage, maxPages, "/plot help");
@@ -43,11 +44,12 @@ public class HelpPage {
 
     public HelpPage(CommandCategory category, int currentPage, int maxPages, String helpCommand) {
         this.helpObjects = new ArrayList<>();
+        this.navigation = buildNavigation(currentPage, maxPages, helpCommand);
         this.pageHeaderResolver = TagResolver.builder()
                 .tag("category", Tag.inserting(Component.text(category == null ? "ALL" : category.name())))
                 .tag("current", Tag.inserting(Component.text(currentPage + 1)))
                 .tag("max", Tag.inserting(Component.text(maxPages + 1)))
-                .tag("navigation", Tag.inserting(buildNavigation(currentPage, maxPages, helpCommand)))
+                .tag("navigation", Tag.inserting(this.navigation))
                 .build();
     }
 
@@ -78,10 +80,14 @@ public class HelpPage {
                             pageHeaderResolver
                     )))
                     .tag("help_objects", Tag.inserting(ComponentHelper.join(this.helpObjects, Component.text("\n"))))
+                    // Render the clickable navigation directly so it works even when the on-disk
+                    // language file predates the <navigation> placeholder (lang files are never
+                    // overwritten on update, only missing keys are patched in).
+                    .tag("navigation", Tag.inserting(this.navigation))
                     .tag("footer", Tag.inserting(TranslatableCaption.of("help.help_footer").toComponent(player)))
                     .build();
             player.sendMessage(
-                    StaticCaption.of("<header>\n<page_header>\n<help_objects>\n<footer>"),
+                    StaticCaption.of("<header>\n<page_header>\n<help_objects>\n<navigation>\n<footer>"),
                     contentResolver
             );
         }

@@ -105,7 +105,9 @@ public class PlotHelp {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lines.size(); i++) {
             if (i > 0) {
-                builder.append('\n');
+                // Reset formatting at every line break so an unclosed tag (e.g. <strikethrough>
+                // in a separator line) does not bleed into the lines below it.
+                builder.append("<reset>\n");
             }
             builder.append(lines.get(i)
                     .replace("<nawigacja>", navigation)
@@ -167,27 +169,27 @@ public class PlotHelp {
             pages:
               # ---------------- STRONA 1 ----------------
               -
-                - "<dark_gray><strikethrough>------------------------------"
+                - "<dark_gray><strikethrough>------------------------------</strikethrough></dark_gray>"
                 - "<gold><bold>            Pomoc - Działki"
-                - "<dark_gray><strikethrough>------------------------------"
+                - "<dark_gray><strikethrough>------------------------------</strikethrough></dark_gray>"
                 - "<click:run_command:'/plot home'><hover:show_text:'<gray>Kliknij, aby wykonać'><gold>/plot home <dark_gray>- <gray>Teleport na swoją działkę</hover></click>"
                 - "<click:run_command:'/plot auto'><hover:show_text:'<gray>Kliknij, aby wykonać'><gold>/plot auto <dark_gray>- <gray>Zajmij najbliższą wolną działkę</hover></click>"
                 - "<click:run_command:'/plot claim'><hover:show_text:'<gray>Kliknij, aby wykonać'><gold>/plot claim <dark_gray>- <gray>Zajmij działkę, na której stoisz</hover></click>"
                 - "<click:run_command:'/plot info'><hover:show_text:'<gray>Kliknij, aby wykonać'><gold>/plot info <dark_gray>- <gray>Informacje o działce</hover></click>"
                 - "<click:run_command:'/plot delete'><hover:show_text:'<gray>Kliknij, aby wykonać'><gold>/plot delete <dark_gray>- <gray>Usuń swoją działkę</hover></click>"
                 - "<click:run_command:'/plot merge'><hover:show_text:'<gray>Kliknij, aby wykonać'><gold>/plot merge <dark_gray>- <gray>Połącz swoje działki</hover></click>"
-                - "<dark_gray><strikethrough>------</strikethrough> <gold>Strona <strona>/<max_stron></gold> <nawigacja> <dark_gray><strikethrough>------"
+                - "<dark_gray><strikethrough>------</strikethrough> <gold>Strona <strona>/<max_stron></gold> <nawigacja> <dark_gray><strikethrough>------</strikethrough></dark_gray>"
               # ---------------- STRONA 2 ----------------
               -
-                - "<dark_gray><strikethrough>------------------------------"
+                - "<dark_gray><strikethrough>------------------------------</strikethrough></dark_gray>"
                 - "<gold><bold>            Pomoc - Działki"
-                - "<dark_gray><strikethrough>------------------------------"
+                - "<dark_gray><strikethrough>------------------------------</strikethrough></dark_gray>"
                 - "<click:suggest_command:'/plot visit '><hover:show_text:'<gray>Kliknij, aby wpisać'><gold>/plot visit <gray>[gracz] <dark_gray>- <gray>Odwiedź czyjąś działkę</hover></click>"
                 - "<click:suggest_command:'/plot add '><hover:show_text:'<gray>Kliknij, aby wpisać'><gold>/plot add <gray>[gracz] <dark_gray>- <gray>Dodaj gracza (gdy jesteś online)</hover></click>"
                 - "<click:suggest_command:'/plot trust '><hover:show_text:'<gray>Kliknij, aby wpisać'><gold>/plot trust <gray>[gracz] <dark_gray>- <gray>Zaufaj graczowi (także offline)</hover></click>"
                 - "<click:suggest_command:'/plot remove '><hover:show_text:'<gray>Kliknij, aby wpisać'><gold>/plot remove <gray>[gracz] <dark_gray>- <gray>Usuń gracza z działki</hover></click>"
                 - "<click:suggest_command:'/plot deny '><hover:show_text:'<gray>Kliknij, aby wpisać'><gold>/plot deny <gray>[gracz] <dark_gray>- <gray>Zablokuj graczowi wejście</hover></click>"
-                - "<dark_gray><strikethrough>------</strikethrough> <gold>Strona <strona>/<max_stron></gold> <nawigacja> <dark_gray><strikethrough>------"
+                - "<dark_gray><strikethrough>------</strikethrough> <gold>Strona <strona>/<max_stron></gold> <nawigacja> <dark_gray><strikethrough>------</strikethrough></dark_gray>"
             """;
 
 }
