@@ -106,6 +106,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Tameable;
+import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -1708,6 +1710,10 @@ public class PlayerEventListener implements Listener {
         }
     }
 
+    private static boolean isStorageMinecart(final Entity entity) {
+        return entity instanceof StorageMinecart || entity instanceof HopperMinecart;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if (event.getRightClicked().getType() == EntityType.UNKNOWN) {
@@ -1774,7 +1780,8 @@ public class PlayerEventListener implements Listener {
             }
 
             if (EntityCategories.VEHICLE.contains(entityType) && flagContainer
-                    .getFlag(VehicleUseFlag.class).getValue()) {
+                    .getFlag(VehicleUseFlag.class).getValue()
+                    && !isStorageMinecart(entity)) {
                 return;
             }
 
