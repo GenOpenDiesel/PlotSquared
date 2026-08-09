@@ -765,7 +765,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final PluginCommand plotCommand = getCommand("plots");
         if (plotCommand != null) {
             plotCommand.setExecutor(bukkitCommand);
-            plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
+            plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot", "dzialka"));
             plotCommand.setTabCompleter(bukkitCommand);
         }
     }

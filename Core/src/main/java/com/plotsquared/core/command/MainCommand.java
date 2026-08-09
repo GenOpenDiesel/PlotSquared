@@ -55,7 +55,7 @@ import javax.annotation.Nullable;
  * PlotSquared command class.
  */
 @CommandDeclaration(command = "plot",
-        aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
+        aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap", "dzialka"})
 public class MainCommand extends Command {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + MainCommand.class.getSimpleName());

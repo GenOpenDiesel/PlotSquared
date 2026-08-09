@@ -833,7 +833,8 @@ public class Settings extends Config {
                 "2",
                 "plotme",
                 "plotz",
-                "ap"
+                "ap",
+                "dzialka"
         );
         @Comment("Whether PlotSquared should hook into MvDWPlaceholderAPI or not")
         public static boolean USE_MVDWAPI = true;
