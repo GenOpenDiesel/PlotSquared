@@ -173,11 +173,11 @@ public final class FlagCommand extends Command {
     }
 
     /**
-     * Checks if the player is allowed to modify the flags at their current location
+     * Checks if the player is allowed to interact with flags at their current location
      *
      * @return {@code true} if the player is allowed to modify the flags at their current location
      */
-    private static boolean checkRequirements(final @NonNull PlotPlayer<?> player) {
+    private static boolean checkRequirements(final @NonNull PlotPlayer<?> player, final @NonNull Permission permissionIfNotOwner) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
@@ -187,10 +187,10 @@ public final class FlagCommand extends Command {
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_SET_FLAG_OTHER)) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(permissionIfNotOwner)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_SET_FLAG_OTHER))
+                    TagResolver.resolver("node", Tag.inserting(permissionIfNotOwner))
             );
             return false;
         }
@@ -363,7 +363,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             return;
         }
         if (args.length < 2) {
@@ -428,7 +428,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             return;
         }
         if (args.length < 2) {
@@ -503,7 +503,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             return;
         }
         if (args.length != 1 && args.length != 2) {
@@ -630,7 +630,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_FLAG_LIST_OTHER)) {
             return;
         }
 
@@ -680,7 +680,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             return;
         }
         if (args.length < 1) {
