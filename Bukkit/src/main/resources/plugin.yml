@@ -4,7 +4,7 @@ api-version: "1.13"
 version: "${version}"
 load: STARTUP
 description: "Easy, yet powerful Plot World generation and management."
-authors: [ Citymonstret, Empire92, MattBDev, dordsor21, NotMyFault, SirYwell ]
+authors: [genallthebest]
 website: https://www.spigotmc.org/resources/77506/
 softdepend: [ Vault, PlaceholderAPI, Essentials, LuckPerms, BungeePerms, MVdWPlaceholderAPI ]
 loadbefore: [ MultiWorld, Multiverse-Core ]
