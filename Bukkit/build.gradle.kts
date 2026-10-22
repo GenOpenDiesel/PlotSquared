@@ -38,6 +38,7 @@ dependencies {
 
     // Paper
     compileOnly(libs.paper)
+    testImplementation(libs.paper)
 
     // Plugins
     compileOnly(libs.worldeditBukkit)
@@ -66,6 +67,10 @@ tasks.processResources {
     filesMatching("plugin.yml") {
         expand("version" to project.version)
     }
+}
+
+tasks.test {
+    dependsOn(":plotsquared-core:shadowJar")
 }
 
 tasks.named<ShadowJar>("shadowJar") {

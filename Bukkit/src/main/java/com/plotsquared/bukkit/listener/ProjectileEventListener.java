@@ -52,6 +52,8 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.function.BiPredicate;
+
 @SuppressWarnings("unused")
 public class ProjectileEventListener implements Listener {
 
@@ -76,14 +78,7 @@ public class ProjectileEventListener implements Listener {
         if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
-        int count = 0;
-        for (LivingEntity victim : event.getAffectedEntities()) {
-            if (!BukkitEntityUtil.entityDamage(damager, victim)) {
-                event.setIntensity(victim, 0);
-                count++;
-            }
-        }
-        if (count > 0 && count == event.getAffectedEntities().size()) {
+        if (filterPotionTargets(event, BukkitEntityUtil::entityDamage)) {
             event.setCancelled(true);
         } else {
             // Cancelling projectile hit events still results in potions
@@ -91,6 +86,27 @@ public class ProjectileEventListener implements Listener {
             // avoid that.
             onProjectileHit(event);
         }
+    }
+
+    static boolean filterPotionTargets(
+            PotionSplashEvent event,
+            BiPredicate<ThrownPotion, LivingEntity> canDamage
+    ) {
+        ThrownPotion potion = event.getPotion();
+        ProjectileSource shooter = potion.getShooter();
+        boolean removedTarget = false;
+        for (LivingEntity victim : event.getAffectedEntities()) {
+            // A player's own potion is not PvP. Other targets still need their normal protection checks.
+            if (shooter instanceof Player && victim.equals(shooter)) {
+                continue;
+            }
+            if (!canDamage.test(potion, victim)) {
+                event.setIntensity(victim, 0);
+                removedTarget = true;
+            }
+        }
+        // setIntensity(0) removes targets from the event, so compare against the remaining targets.
+        return removedTarget && event.getAffectedEntities().isEmpty();
     }
 
     @EventHandler(ignoreCancelled = true)
